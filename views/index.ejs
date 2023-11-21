@@ -1,5 +1,20 @@
 <%- include('header') %>
-<body>
-    <h1>This is the landing page</h1>
-</body>
-</html>
+
+    <body>
+        <header>
+            <h1>Pokemon Trading</h1>
+            <h2>Card sets</h2>
+        </header>
+
+        <div style="display: flex; flex-wrap: wrap;">
+            <% sets.forEach((bk)=>{ %>
+                <blockquote style=" flex-grow: 1; flex-basis: 25%; margin: 10px; min-height: 120px;">
+                    <div>
+                        <%= bk.set_name %><br>
+                    </div>
+                </blockquote>
+            <% }) %>
+        </div>
+    </body>
+
+    </html>
