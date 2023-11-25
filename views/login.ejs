@@ -2,18 +2,33 @@
 <body>
 
     <header>
-       <h3>My Telly</h3>
-    </header>
+        <h1>Pokemon Trading</h1>
+        <h2><%= tdata %></h2>
+     </header>
     
     <main>
        <div>
-           <form action="/login" method="POST">
-               <p>
-                   username : <input name="emailField">
-               </p>
-               <input type="submit" value="login">
-           </form>
+        <% if (source === 'signup') { %>
+            <p><a href="/login">Already have an account? Log in</a></p>
+            <form action="/signup" method="POST">
+                <p>
+                    username : <input name="signup_username"> <br>
+                    email : <input name="signup_email">
+                </p>
+                <input type="submit" value="Sign up">
+            </form>
+
+        <% } else { %>
+
+        <p><a href="/signup">Sign Up</a></p>
+        <form action="/login" method="POST">
+            <p>
+                email : <input name="login_email">
+            </p>
+            <input type="submit" value="Login">
+        </form>
+        <% } %>
        </div>
    </main>
    
-   </body>
+</body>
