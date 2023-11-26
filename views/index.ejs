@@ -1,23 +1,37 @@
 <%- include('header') %>
 
-    <body>
-        <header>
-            <h1>Pokemon Trading</h1>
-            <h2>Card sets</h2>
-            <h3>
-                <a href="/login">Login</a>
-            </h3>
-            <h3>You are now viewing as <%= role %></h3>
-        </header>
-
+    <h1>Pokemon Trading</h1>
+    <h2>Card sets</h2>
+    <h3>
+        <a href="/login">Login</a>
+    </h3>
+    <h3>You are now viewing as <%= role %>
+    </h3>
+    <div>
         <div>
-            <% sets.forEach((bk)=>{ %>
-                    <div>
-                        <%= bk.set_name %><br>
-                    </div>
-                </blockquote>
-            <% }) %>
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Cards</th>
+                        <th scope="col">Date released</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% sets.forEach((set)=> {
+                        const date = {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                        }; %>
+                        <tr>
+                            <td> <%= set.set_name %></td>
+                            <td><%= set.set_num_cards %></td>
+                            <td><%= set.set_date.toLocaleDateString('en-GB', date) %></td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
         </div>
-    </body>
-
-    </html>
+    </div>
+    <%- include('footer') %>

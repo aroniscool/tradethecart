@@ -58,14 +58,11 @@ app.post('/signup', (req, res) => {
 app.post('/login', (req, res) => {
     const useremail = req.body.login_email;
     const checkuser = `SELECT * FROM ttc_users WHERE email = "${useremail}"`;
-
     db.query(checkuser, (err, result) => {
         if (err) throw err;
-
         if (result.length > 0) {
             // Set the user's role in the session
             req.session.role = result[0].role;
-
             // Redirect to '/'
             res.redirect('/');
         } else {
