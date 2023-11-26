@@ -25,7 +25,7 @@
                         day: 'numeric'
                         }; %>
                         <tr>
-                            <td> <%= set.set_name %></td>
+                            <td><a href="/set?set_id=<%= set.set_id %>"><%= set.set_name %></a></td>
                             <td><%= set.set_num_cards %></td>
                             <td><%= set.set_date.toLocaleDateString('en-GB', date) %></td>
                         </tr>
@@ -34,4 +34,4 @@
             </table>
         </div>
     </div>
-    <%- include('footer') %>
+<%- include('footer') %>

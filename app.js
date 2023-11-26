@@ -35,6 +35,15 @@ app.get('/', (req, res) => {
     });
 });
 
+app.get('/set', (req, res) => {
+    const sid = req.query.set_id;
+    const sql = `SELECT * FROM ttc_cards INNER JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id WHERE ttc_sets.set_id = ${sid};`;
+    db.query(sql, (err, result) => {
+        if (err) throw err;
+        res.render('details', { cards: result, source: 'card' });
+    });
+});
+
 app.get('/login', (req, res) => {
     let title = "Login";
     res.render('login', { tdata: title, source: 'login' });
@@ -47,7 +56,7 @@ app.get('/signup', (req, res) => {
 
 app.post('/signup', (req, res) => {
     const signup_username = req.body.signup_username;
-    const signup_email = req.body.signup_username;
+    const signup_email = req.body.signup_email;
     let sqlinsert = `INSERT INTO ttc_users (username, email, role) VALUES ("${signup_username}", "${signup_email}", "member");`;
     db.query(sqlinsert, (err, result) => {
         if (err) throw err;

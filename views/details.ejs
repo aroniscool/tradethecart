@@ -1,0 +1,35 @@
+<%- include('header') %>
+
+<h1>Pokemon Trading</h1>
+<h2>Cards in Set</h2>
+<h3>
+    <a href="/login">Login</a>
+</h3>
+<div>
+    <% if (source === 'card') { %>
+    <div>
+        <% if (cards && cards.length > 0) { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Card Name</th>
+                        <!-- Add more columns as needed -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <% cards.forEach((card) => { %>
+                        <tr>
+                            <td><%= card.card_name %></td>
+                            <!-- Add more cells for other card properties -->
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p>No cards found in this set.</p>
+        <% } %>
+    </div>
+    <% } %>
+</div>
+
+<%- include('footer') %>
