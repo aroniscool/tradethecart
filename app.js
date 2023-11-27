@@ -46,7 +46,7 @@ app.get('/set', (req, res) => {
 
 app.get('/login', (req, res) => {
     let title = "Login";
-    res.render('login', { tdata: title, source: 'login' });
+    res.render('login', { tdata: title, source: 'login', error: ''});
 });
 
 app.get('/signup', (req, res) => {
@@ -57,10 +57,22 @@ app.get('/signup', (req, res) => {
 app.post('/signup', (req, res) => {
     const signup_username = req.body.signup_username;
     const signup_email = req.body.signup_email;
-    let sqlinsert = `INSERT INTO ttc_users (username, email, role) VALUES ("${signup_username}", "${signup_email}", "member");`;
-    db.query(sqlinsert, (err, result) => {
+    // Check if the username or email already exists
+    let checkExistingUser = `SELECT * FROM ttc_users WHERE username = "${signup_username}" OR email = "${signup_email}"`;
+    db.query(checkExistingUser, (err, existingUser) => {
         if (err) throw err;
-        res.send(`Congratulations ${signup_username}! You have successfully logged into our system!`)
+        if (existingUser.length > 0) {
+            // Username or email already exists, render an error message
+            let title = "Sign up";
+            res.render('login', { tdata: title, source: 'signup', error: 'Username or email already in use' });
+        } else {
+            // Username and email are unique, proceed with the signup
+            let sqlinsert = `INSERT INTO ttc_users (username, email, role) VALUES ("${signup_username}", "${signup_email}", "member");`;
+            db.query(sqlinsert, (err, result) => {
+                if (err) throw err;
+                res.send(`Congratulations ${signup_username}! You have successfully signed up!`);
+            });
+        }
     });
 });
 
@@ -76,11 +88,10 @@ app.post('/login', (req, res) => {
             res.redirect('/');
         } else {
             // If email doesn't exist, render the login page with an error message
-            res.render('login', { tdata: 'Login', source: 'login'});
+            res.render('login', { tdata: 'Login', source: 'login', error: 'No email'});
         }
     });
 });
-
 
 app.listen(PORT, () => {
     console.log(`App running on http://localhost:${PORT}`)
