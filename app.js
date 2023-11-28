@@ -36,8 +36,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/set', (req, res) => {
-    const sid = req.query.set_id;
-    const sql = `SELECT * FROM ttc_cards INNER JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id WHERE ttc_sets.set_id = ${sid};`;
+    const sid = req.query.id;
+    const sql = `SELECT * FROM ttc_cards INNER JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.id WHERE ttc_sets.id = ${sid};`;
     db.query(sql, (err, result) => {
         if (err) throw err;
         res.render('details', { cards: result, source: 'card' });

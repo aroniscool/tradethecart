@@ -13,14 +13,12 @@
                 <thead>
                     <tr>
                         <th scope="col">Card Name</th>
-                        <!-- Add more columns as needed -->
                     </tr>
                 </thead>
                 <tbody>
                     <% cards.forEach((card) => { %>
                         <tr>
-                            <td><%= card.card_name %></td>
-                            <!-- Add more cells for other card properties -->
+                            <td><%= card.name %></td>
                         </tr>
                     <% }); %>
                 </tbody>
