@@ -55,10 +55,11 @@ app.get('/signup', (req, res) => {
 });
 
 app.post('/signup', (req, res) => {
-    const signup_username = req.body.signup_username;
-    const signup_email = req.body.signup_email;
+    const username = req.body.signup_username;
+    const email = req.body.signup_email;
+    const password = req.body.signup_password;
     // Check if the username or email already exists
-    let checkExistingUser = `SELECT * FROM ttc_users WHERE username = "${signup_username}" OR email = "${signup_email}"`;
+    let checkExistingUser = `SELECT * FROM ttc_users WHERE username = "${username}" OR email = "${email}"`;
     db.query(checkExistingUser, (err, existingUser) => {
         if (err) throw err;
         if (existingUser.length > 0) {
@@ -67,10 +68,10 @@ app.post('/signup', (req, res) => {
             res.render('login', { tdata: title, source: 'signup', error: 'Username or email already in use' });
         } else {
             // Username and email are unique, proceed with the signup
-            let sqlinsert = `INSERT INTO ttc_users (username, email, role) VALUES ("${signup_username}", "${signup_email}", "member");`;
+            let sqlinsert = `INSERT INTO ttc_users (username, email, password, role) VALUES ("${username}", "${email}", "${password}", "member");`;
             db.query(sqlinsert, (err, result) => {
                 if (err) throw err;
-                res.send(`Congratulations ${signup_username}! You have successfully signed up!`);
+                res.send(`Congratulations ${username}! You have successfully signed up!`);
             });
         }
     });
@@ -78,7 +79,8 @@ app.post('/signup', (req, res) => {
 
 app.post('/login', (req, res) => {
     const useremail = req.body.login_email;
-    const checkuser = `SELECT * FROM ttc_users WHERE email = "${useremail}"`;
+    const password = req.body.login_password;
+    const checkuser = `SELECT * FROM ttc_users WHERE email = "${useremail}" AND password = "${password}"`;
     db.query(checkuser, (err, result) => {
         if (err) throw err;
         if (result.length > 0) {
@@ -88,7 +90,7 @@ app.post('/login', (req, res) => {
             res.redirect('/');
         } else {
             // If email doesn't exist, render the login page with an error message
-            res.render('login', { tdata: 'Login', source: 'login', error: 'No email'});
+            res.render('login', { tdata: 'Login', source: 'login', error: 'Incorrect email or password'});
         }
     });
 });
