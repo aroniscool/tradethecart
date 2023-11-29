@@ -27,7 +27,7 @@ app.use(sessions({
 }));
 
 app.get('/', (req, res) => {
-    let setsql = `SELECT * FROM ttc_sets`;
+    let setsql = `SELECT * FROM ttc_sets ORDER BY set_date DESC`;
     let role = req.session.role || "guest"; // Default to 'guest' if role is not set
     db.query(setsql, (err, result) => {
         if (err) throw err;
@@ -37,7 +37,9 @@ app.get('/', (req, res) => {
 
 app.get('/set', (req, res) => {
     const sid = req.query.id;
-    const sql = `SELECT ttc_cards.name FROM ttc_cards INNER JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.id WHERE ttc_sets.id = ${sid};`;
+    const sql = `SELECT ttc_sets.set_name, ttc_cards.name, ttc_cards.hp, ttc_cards.attacks, ttc_stages.st_name, ttc_cards.img_low FROM ttc_cards 
+                INNER JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
+                WHERE ttc_sets.set_id = ${sid};`;
     db.query(sql, (err, result) => {
         if (err) throw err;
         res.render('details', { cards: result, source: 'card' });

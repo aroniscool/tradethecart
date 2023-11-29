@@ -1,10 +1,8 @@
 <%- include('header') %>
 
 <h1>Pokemon Trading</h1>
-<h2>Cards in Set</h2>
-<h3>
-    <a href="/login">Login</a>
-</h3>
+<h3><a href="/login">Login</a></h3>
+<h2><%= cards[0] ? cards[0].set_name : 'Set empty' %></h2>
 <div>
     <% if (source === 'card') { %>
     <div>
@@ -13,12 +11,18 @@
                 <thead>
                     <tr>
                         <th scope="col">Card Name</th>
+                        <th scope="col">HP</th>
+                        <th scope="col">Stage</th>
+                        <th scope="col">Attacks</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% cards.forEach((card) => { %>
                         <tr>
                             <td><%= card.name %></td>
+                            <td><%= card.hp %></td>
+                            <td><%= card.st_name %></td>
+                            <td><%= card.attacks %></td>
                         </tr>
                     <% }); %>
                 </tbody>
