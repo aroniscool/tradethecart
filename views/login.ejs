@@ -1,8 +1,5 @@
 <%- include('header') %>
-<body>
-
     <header>
-        <h1>Pokemon Trading</h1>
         <h2><%= tdata %></h2>
     </header>
     
@@ -11,11 +8,12 @@
             <% if (source === 'signup') { %>
                 <p><a href="/login">Already have an account? Log in</a></p>
                 <form action="/signup" method="POST">
-                    <p>
-                        Username : <input name="signup_username"> <br>
-                        E-mail : <input name="signup_email"> <br>
-                        Password : <input type="password" name="signup_password">
-                    </p>
+                    <label>Username:</label><br>
+                    <input name="signup_username" required><br>
+                    <label>E-mail:</label><br>
+                    <input name="signup_email" type="email" required><br>
+                    <label>Password:</label><br>
+                    <input type="password" name="signup_password" required><br><br>
                     <input type="submit" value="Sign up">
                 </form>
 
@@ -24,7 +22,7 @@
                 <p><a href="/signup">Sign Up</a></p>
                 <form action="/login" method="POST">
                     <p>
-                        E-mail : <input name="login_email">
+                        E-mail : <input type="email" name="login_email">
                         Password : <input type="password" name="login_password">
                     </p>
                     <input type="submit" value="Login">

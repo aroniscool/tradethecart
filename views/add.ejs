@@ -1,0 +1,28 @@
+<%- include('header') %>
+<h2>Add card</h2>
+<form action="/add" method="POST">
+    <label>Card name:</label><br>
+    <input name="card_name" required><br>
+    <label>Set:</label><br>
+    <select name="card_set">
+        <% sets.forEach(set => { %>
+            <option value="<%= set.set_id %>"><%= set.set_name %></option>
+        <% }); %>
+    </select><br>
+    <label>HP:</label><br>
+    <input name="card_hp" type="number" required><br>
+    <label>Stage:</label><br>
+    <select name="card_stage">
+        <% stages.forEach(stage => { %>
+            <option value="<%= stage.st_id %>"><%= stage.st_name %></option>
+        <% }); %>
+    </select><br>
+    <label>Attacks:</label><br>
+    <textarea name="card_attack" rows="2" required></textarea><br>
+    <label>Image (low):</label><br>
+    <textarea name="card_img_low" rows="2" required></textarea><br>
+    <label>Image (high):</label><br>
+    <textarea name="card_img_high" rows="2" required></textarea><br>
+    <button type="submit">Submit</button>
+</form>
+<%- include('footer') %>

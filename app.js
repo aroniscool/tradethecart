@@ -12,11 +12,11 @@ app.set('view engine', 'ejs');
 app.use(cookieParser());
 
 const db = mysql.createConnection({
-    host:"localhost",
-    user:"root",
-    database:"abhuiyan01",
-    password:"",
-    port:"3306",
+    host: "localhost",
+    user: "root",
+    database: "abhuiyan01",
+    password: "",
+    port: "3306",
 });
 
 app.use(sessions({
@@ -29,9 +29,10 @@ app.use(sessions({
 app.get('/', (req, res) => {
     let setsql = `SELECT * FROM ttc_sets ORDER BY set_date DESC`;
     let role = req.session.role || "guest"; // Default to 'guest' if role is not set
+    let authen = req.session.authen || null;
     db.query(setsql, (err, result) => {
         if (err) throw err;
-        res.render('index', { sets: result, role: role });
+        res.render('index', { sets: result, role: role, authen: authen });
     });
 });
 
@@ -46,9 +47,51 @@ app.get('/set', (req, res) => {
     });
 });
 
+app.get('/add', (req, res) => {
+    const sessionobj = req.session;
+    if (sessionobj.authen) {
+        const uid = sessionobj.authen;
+        const user = `SELECT * FROM ttc_users WHERE user_id = "${uid}" `;
+        db.query(user, (err, row) => {
+            if (err) throw err;
+            let setsQuery = `SELECT set_id, set_name FROM ttc_sets`;
+            db.query(setsQuery, (err, sets) => {
+                if (err) throw err;
+                let stagesQuery = `SELECT st_id, st_name FROM ttc_stages`;
+                db.query(stagesQuery, (err, stages) => {
+                    if (err) throw err;
+                    res.render('add', { sets: sets, stages: stages });
+                });
+            });
+        });
+    } else {
+        res.send("denied");
+    }
+});
+
+app.post('/add', (req, res) => {
+    const cardName = req.body.card_name;
+    const setID = req.body.card_set;
+    const hp = req.body.card_hp;
+    const stageID = req.body.card_stage;
+    const attacks = req.body.card_attack;
+    const imgLow = req.body.card_img_low;
+    const imgHigh = req.body.card_img_high;
+    const CardQuery = `INSERT INTO ttc_cards (name, set_id, hp, stage, attacks, img_low, img_high) 
+                        VALUES ('${cardName}','${setID}', '${hp}', '${stageID}', '${attacks}', '${imgLow}', '${imgHigh}')`;
+    db.query(CardQuery, (err, result) => {
+        if (err) {
+            console.error(err);
+            res.send('Error adding the card. Please try again.');
+        } else {
+            res.send('Card added successfully!');
+        }
+    });
+});
+
 app.get('/login', (req, res) => {
     let title = "Login";
-    res.render('login', { tdata: title, source: 'login', error: ''});
+    res.render('login', { tdata: title, source: 'login', error: '' });
 });
 
 app.get('/signup', (req, res) => {
@@ -86,16 +129,18 @@ app.post('/login', (req, res) => {
     db.query(checkuser, (err, result) => {
         if (err) throw err;
         if (result.length > 0) {
-            // Set the user's role in the session
+            // Set the user's role and authen in the session
             req.session.role = result[0].role;
+            req.session.authen = result[0].user_id; // Assuming 'id' is the user identifier
             // Redirect to '/'
             res.redirect('/');
         } else {
             // If email doesn't exist, render the login page with an error message
-            res.render('login', { tdata: 'Login', source: 'login', error: 'Incorrect email or password'});
+            res.render('login', { tdata: 'Login', source: 'login', error: 'Incorrect email or password' });
         }
     });
 });
+
 
 app.listen(PORT, () => {
     console.log(`App running on http://localhost:${PORT}`)
