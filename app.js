@@ -14,7 +14,7 @@ app.use(cookieParser());
 const db = mysql.createConnection({
     host: "localhost",
     user: "root",
-    database: "abhuiyan01",
+    database: "ttc_arien",
     password: "",
     port: "3306",
 });
@@ -28,11 +28,11 @@ app.use(sessions({
 
 app.get('/', (req, res) => {
     let setsql = `SELECT * FROM ttc_sets ORDER BY set_date DESC`;
-    let role = req.session.role || "guest"; // Default to 'guest' if role is not set
+    let name = req.session.username || "guest"; // Default to 'guest' if username is not set
     let authen = req.session.authen || null;
     db.query(setsql, (err, result) => {
         if (err) throw err;
-        res.render('index', { sets: result, role: role, authen: authen });
+        res.render('index', { sets: result, name: name, authen: authen });
     });
 });
 
@@ -113,7 +113,7 @@ app.post('/signup', (req, res) => {
             res.render('login', { tdata: title, source: 'signup', error: 'Username or email already in use' });
         } else {
             // Username and email are unique, proceed with the signup
-            let sqlinsert = `INSERT INTO ttc_users (username, email, password, role) VALUES ("${username}", "${email}", "${password}", "member");`;
+            let sqlinsert = `INSERT INTO ttc_users (username, email, password) VALUES ("${username}", "${email}", "${password}");`;
             db.query(sqlinsert, (err, result) => {
                 if (err) throw err;
                 res.send(`Congratulations ${username}! You have successfully signed up!`);
@@ -129,14 +129,11 @@ app.post('/login', (req, res) => {
     db.query(checkuser, (err, result) => {
         if (err) throw err;
         if (result.length > 0) {
-            // Set the user's role and authen in the session
-            req.session.role = result[0].role;
-            req.session.authen = result[0].user_id; // Assuming 'id' is the user identifier
-            // Redirect to '/'
+            req.session.username = result[0].username;
+            req.session.authen = result[0].user_id;
             res.redirect('/');
         } else {
-            // If email doesn't exist, render the login page with an error message
-            res.render('login', { tdata: 'Login', source: 'login', error: 'Incorrect email or password' });
+            res.render('login', { tdata: 'Login', source: 'login', error: 'Incorrect email and/or password' });
         }
     });
 });
