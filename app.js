@@ -38,8 +38,12 @@ app.get('/', (req, res) => {
 
 app.get('/set', (req, res) => {
     const sid = req.query.id;
-    const sql = `SELECT ttc_sets.set_name, ttc_cards.name, ttc_cards.hp, ttc_cards.attacks, ttc_stages.st_name, ttc_cards.img_low FROM ttc_cards 
-                INNER JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
+    const sql = `SELECT ttc_sets.set_name, ttc_cards.name, ttc_cards.hp, ttc_cards.attacks, ttc_stages.st_name, ttc_cards.img_low, ttc_users.username
+                FROM ttc_cards 
+                JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id 
+                JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
+                JOIN ttc_user_cards ON ttc_cards.id = ttc_user_cards.card_id
+                JOIN ttc_users ON ttc_user_cards.user_id = ttc_users.user_id
                 WHERE ttc_sets.set_id = ${sid};`;
     db.query(sql, (err, result) => {
         if (err) throw err;

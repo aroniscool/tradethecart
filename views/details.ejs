@@ -13,6 +13,7 @@
                         <th scope="col">HP</th>
                         <th scope="col">Stage</th>
                         <th scope="col">Attacks</th>
+                        <th scope="col">Submitted by:</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -22,6 +23,7 @@
                             <td><%= card.hp %></td>
                             <td><%= card.st_name %></td>
                             <td><%= card.attacks %></td>
+                            <td><%= card.username%></td>
                         </tr>
                     <% }); %>
                 </tbody>
