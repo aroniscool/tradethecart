@@ -1,9 +1,9 @@
 <%- include('header') %>
 
-<h2><%= cards[0] ? cards[0].set_name : 'Set empty' %></h2>
 <div>
     <% if (source === 'card') { %>
     <div>
+        <h2><%= cards[0] ? cards[0].set_name : 'Set empty' %></h2>
         <% if (cards && cards.length > 0) { %>
             <table>
                 <thead>
@@ -31,6 +31,9 @@
             <p>No cards found in this set.</p>
         <% } %>
     </div>
+    <% } %>
+    <% if (source === 'member') { %>
+        <p>Hello</p>
     <% } %>
 </div>
 

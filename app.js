@@ -103,6 +103,9 @@ app.post('/add', (req, res) => {
     }
 });
 
+app.get('/members', (req, res) => {
+    res.render('details', { source: 'member' });
+});
 
 app.get('/login', (req, res) => {
     let title = "Login";
