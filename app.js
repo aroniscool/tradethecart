@@ -74,24 +74,35 @@ app.get('/add', (req, res) => {
 });
 
 app.post('/add', (req, res) => {
-    const cardName = req.body.card_name;
-    const setID = req.body.card_set;
-    const hp = req.body.card_hp;
-    const stageID = req.body.card_stage;
-    const attacks = req.body.card_attack;
-    const imgLow = req.body.card_img_low;
-    const imgHigh = req.body.card_img_high;
-    const CardQuery = `INSERT INTO ttc_cards (name, set_id, hp, stage, attacks, img_low, img_high) 
-                        VALUES ('${cardName}','${setID}', '${hp}', '${stageID}', '${attacks}', '${imgLow}', '${imgHigh}')`;
-    db.query(CardQuery, (err, result) => {
-        if (err) {
-            console.error(err);
-            res.send('Error adding the card. Please try again.');
-        } else {
-            res.send('Card added successfully!');
-        }
-    });
+    const sessionobj = req.session;
+    if (sessionobj.authen) {
+        const uid = sessionobj.authen;
+        const cardName = req.body.card_name;
+        const setID = req.body.card_set;
+        const hp = req.body.card_hp;
+        const stageID = req.body.card_stage;
+        const attacks = req.body.card_attack;
+        const imgLow = req.body.card_img_low;
+        const imgHigh = req.body.card_img_high;
+        const cardInsertQuery = `INSERT INTO ttc_cards (name, set_id, hp, stage, attacks, img_low, img_high) 
+                                VALUES ('${cardName}', '${setID}', '${hp}', '${stageID}', '${attacks}', '${imgLow}', '${imgHigh}')`;
+        db.query(cardInsertQuery, (err, cardResult) => {
+            if (err) {
+                console.error(err);
+                return res.send('Error adding the card. Please try again.');
+            }
+            const cardID = cardResult.insertId;
+            const userCardInsertQuery = `INSERT INTO ttc_user_cards (user_id, card_id) VALUES ('${uid}', '${cardID}')`;
+            db.query(userCardInsertQuery, (err) => {
+                if (err) throw err;
+                res.send('Card added successfully!');
+            });
+        });
+    } else {
+        res.send("denied");
+    }
 });
+
 
 app.get('/login', (req, res) => {
     let title = "Login";
@@ -120,7 +131,10 @@ app.post('/signup', (req, res) => {
             let sqlinsert = `INSERT INTO ttc_users (username, email, password) VALUES ("${username}", "${email}", "${password}");`;
             db.query(sqlinsert, (err, result) => {
                 if (err) throw err;
-                res.send(`Congratulations ${username}! You have successfully signed up!`);
+                const userId = result.insertId;
+                req.session.username = username;
+                req.session.authen = userId;
+                res.redirect('/');
             });
         }
     });
