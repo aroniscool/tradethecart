@@ -28,13 +28,18 @@ app.use(sessions({
 
 app.get('/', (req, res) => {
     let setsql = `SELECT * FROM ttc_sets ORDER BY set_date DESC`;
+    let namesql = `SELECT username FROM ttc_users`; // Fetch usernames
     let name = req.session.username || "guest"; // Default to 'guest' if username is not set
     let authen = req.session.authen || null;
-    db.query(setsql, (err, result) => {
-        if (err) throw err;
-        res.render('index', { sets: result, name: name, authen: authen });
+    db.query(setsql, (errSets, resultSets) => {
+        if (errSets) throw errSets;
+        db.query(namesql, (errUsers, resultUsers) => {
+            if (errUsers) throw errUsers;
+            res.render('index', { sets: resultSets, users: resultUsers, name: name, authen: authen });
+        });
     });
 });
+
 
 app.get('/set', (req, res) => {
     const sid = req.query.id;
@@ -103,7 +108,7 @@ app.post('/add', (req, res) => {
     }
 });
 
-app.get('/members', (req, res) => {
+app.get('/member', (req, res) => {
     res.render('details', { source: 'member' });
 });
 
