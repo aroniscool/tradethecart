@@ -33,7 +33,31 @@
     </div>
     <% } %>
     <% if (source === 'member') { %>
-        <p>Hello</p>
+        <h2><%= member[0] ? member[0].username : 'User' %>'s collection</h2>
+        <% if (member && member.length > 0) { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Card Name</th>
+                        <th scope="col">HP</th>
+                        <th scope="col">Stage</th>
+                        <th scope="col">Attacks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% member.forEach((card) => { %>
+                        <tr>
+                            <td><%= card.name %></td>
+                            <td><%= card.hp %></td>
+                            <td><%= card.st_name %></td>
+                            <td><%= card.attacks %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p>No cards found in this user's collection.</p>
+        <% } %>
     <% } %>
 </div>
 

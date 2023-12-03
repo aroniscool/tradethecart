@@ -28,7 +28,7 @@ app.use(sessions({
 
 app.get('/', (req, res) => {
     let setsql = `SELECT * FROM ttc_sets ORDER BY set_date DESC`;
-    let namesql = `SELECT username FROM ttc_users`; // Fetch usernames
+    let namesql = `SELECT user_id, username FROM ttc_users`; // Fetch usernames
     let name = req.session.username || "guest"; // Default to 'guest' if username is not set
     let authen = req.session.authen || null;
     db.query(setsql, (errSets, resultSets) => {
@@ -43,7 +43,7 @@ app.get('/', (req, res) => {
 
 app.get('/set', (req, res) => {
     const sid = req.query.id;
-    const sql = `SELECT ttc_sets.set_name, ttc_cards.name, ttc_cards.hp, ttc_cards.attacks, ttc_stages.st_name, ttc_cards.img_low, ttc_users.username
+    const sql = `SELECT *
                 FROM ttc_cards 
                 JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id 
                 JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
@@ -91,14 +91,11 @@ app.post('/add', (req, res) => {
         const imgHigh = req.body.card_img_high;
         const cardInsertQuery = `INSERT INTO ttc_cards (name, set_id, hp, stage, attacks, img_low, img_high) 
                                 VALUES ('${cardName}', '${setID}', '${hp}', '${stageID}', '${attacks}', '${imgLow}', '${imgHigh}')`;
-        db.query(cardInsertQuery, (err, cardResult) => {
-            if (err) {
-                console.error(err);
-                return res.send('Error adding the card. Please try again.');
-            }
-            const cardID = cardResult.insertId;
+        db.query(cardInsertQuery, (err, addResult) => {
+            if (err) throw err;
+            const cardID = addResult.insertId;
             const userCardInsertQuery = `INSERT INTO ttc_user_cards (user_id, card_id) VALUES ('${uid}', '${cardID}')`;
-            db.query(userCardInsertQuery, (err) => {
+            db.query(userCardInsertQuery, (err, result) => {
                 if (err) throw err;
                 res.send('Card added successfully!');
             });
@@ -109,8 +106,21 @@ app.post('/add', (req, res) => {
 });
 
 app.get('/member', (req, res) => {
-    res.render('details', { source: 'member' });
+    const userId = req.query.id;
+    const userCardsQuery = `
+        SELECT *
+        FROM ttc_cards
+        JOIN ttc_user_cards ON ttc_cards.id = ttc_user_cards.card_id
+        JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
+        JOIN ttc_users ON ttc_user_cards.user_id = ttc_users.user_id
+        WHERE ttc_user_cards.user_id = ${userId};
+    `;
+    db.query(userCardsQuery, (err, userCards) => {
+        if (err) throw err;
+        res.render('details', { source: 'member', member: userCards });
+    });
 });
+
 
 app.get('/login', (req, res) => {
     let title = "Login";
