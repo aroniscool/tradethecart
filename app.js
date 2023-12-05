@@ -43,16 +43,31 @@ app.get('/', (req, res) => {
 
 app.get('/set', (req, res) => {
     const sid = req.query.id;
-    const sql = `SELECT *
-                FROM ttc_cards 
-                JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id 
-                JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
-                JOIN ttc_user_cards ON ttc_cards.id = ttc_user_cards.card_id
-                JOIN ttc_users ON ttc_user_cards.user_id = ttc_users.user_id
-                WHERE ttc_sets.set_id = ${sid};`;
-    db.query(sql, (err, result) => {
-        if (err) throw err;
-        res.render('details', { cards: result, source: 'card' });
+    const limit = 10;
+    const page = req.query.page || 1;
+    const offset = (page - 1) * limit;
+    const countQuery = `SELECT COUNT(*) AS total FROM ttc_cards WHERE set_id = ${sid}`;
+    const sql = `
+        SELECT *
+        FROM ttc_cards 
+        JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id 
+        JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
+        JOIN ttc_user_cards ON ttc_cards.id = ttc_user_cards.card_id
+        JOIN ttc_users ON ttc_user_cards.user_id = ttc_users.user_id
+        WHERE ttc_sets.set_id = ${sid}
+        LIMIT ${limit}
+        OFFSET ${offset};
+    `;
+    db.query(countQuery, (errCount, countResult) => {
+        if (errCount) throw errCount;
+
+        const totalCards = countResult[0].total;
+        const totalPages = Math.ceil(totalCards / limit);
+
+        db.query(sql, (err, result) => {
+            if (err) throw err;
+            res.render('details', { cards: result, source: 'card', totalPages: totalPages, currentPage: page });
+        });
     });
 });
 
@@ -107,20 +122,32 @@ app.post('/add', (req, res) => {
 
 app.get('/member', (req, res) => {
     const userId = req.query.id;
+    const limit = 10;
+    const page = req.query.page || 1; // Get the requested page from the query parameters
+    const offset = (page - 1) * limit;
+    const countQuery = `SELECT COUNT(*) AS total FROM ttc_user_cards WHERE user_id = ${userId}`;
     const userCardsQuery = `
         SELECT *
         FROM ttc_cards
         JOIN ttc_user_cards ON ttc_cards.id = ttc_user_cards.card_id
         JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
         JOIN ttc_users ON ttc_user_cards.user_id = ttc_users.user_id
-        WHERE ttc_user_cards.user_id = ${userId};
+        WHERE ttc_user_cards.user_id = ${userId}
+        LIMIT ${limit}
+        OFFSET ${offset};
     `;
-    db.query(userCardsQuery, (err, userCards) => {
-        if (err) throw err;
-        res.render('details', { source: 'member', member: userCards });
+    db.query(countQuery, (errCount, countResult) => {
+        if (errCount) throw errCount;
+
+        const totalCards = countResult[0].total;
+        const totalPages = Math.ceil(totalCards / limit);
+
+        db.query(userCardsQuery, (err, userCards) => {
+            if (err) throw err;
+            res.render('details', {userId: userId, source: 'member', member: userCards, totalPages: totalPages, currentPage: page});
+        });
     });
 });
-
 
 app.get('/login', (req, res) => {
     let title = "Login";
