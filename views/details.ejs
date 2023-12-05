@@ -59,9 +59,8 @@
             <p>No cards found in this user's collection.</p>
         <% } %>
     <% } %>
-    <nav>
     <% if (totalPages > 1) { %>
-        <div class="pagination">
+        <nav>
             <% for (let i = 1; i <= totalPages; i++) { %>
                 <% if (i === currentPage) { %>
                     <span class="current-page"><%= i %></span>
@@ -69,9 +68,8 @@
                     <a href="/member?id=<%= userId %>&page=<%= i %>"><%= i %></a>
                 <% } %>
             <% } %>
-        </div>
+        </nav>
     <% } %>
-    </nav>
 </div>
 
 <%- include('footer') %>
