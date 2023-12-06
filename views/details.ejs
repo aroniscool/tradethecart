@@ -18,11 +18,11 @@
                 <tbody>
                     <% cards.forEach((card) => { %>
                         <tr>
-                            <td><%= card.name %></td>
+                            <td class="tooltip"><%= card.name %> <span class="tooltiptext"><img src="<%= card.img_low %>" alt="Image of <%= card.name %>"></span></td>
                             <td><%= card.hp %></td>
                             <td><%= card.st_name %></td>
                             <td><%= card.attacks %></td>
-                            <td><%= card.username%></td>
+                            <td><%= card.username %></td>
                         </tr>
                     <% }); %>
                 </tbody>
@@ -47,7 +47,7 @@
                 <tbody>
                     <% member.forEach((card) => { %>
                         <tr>
-                            <td><%= card.name %></td>
+                            <td><a href="<%= card.img_high %>"><%= card.name %></a></span></td>
                             <td><%= card.hp %></td>
                             <td><%= card.st_name %></td>
                             <td><%= card.attacks %></td>

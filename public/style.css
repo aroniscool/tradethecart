@@ -1,14 +1,29 @@
-body {
-    background-color: rgb(48, 48, 48);
-    color: white;
-}
-
 h1 {
     color: red;
 }
 
-table, th, td {
-    border: 1px solid white;
+.tooltip {
+    position: relative;
+    border-style: dotted;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+table,
+th,
+td {
+    border: 1px solid black;
     border-collapse: collapse;
     text-align: center;
 }
