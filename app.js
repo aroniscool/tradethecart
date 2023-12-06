@@ -102,10 +102,9 @@ app.post('/add', (req, res) => {
         const hp = req.body.card_hp;
         const stageID = req.body.card_stage;
         const attacks = req.body.card_attack;
-        const imgLow = req.body.card_img_low;
-        const imgHigh = req.body.card_img_high;
-        const cardInsertQuery = `INSERT INTO ttc_cards (name, set_id, hp, stage, attacks, img_low, img_high) 
-                                VALUES ('${cardName}', '${setID}', '${hp}', '${stageID}', '${attacks}', '${imgLow}', '${imgHigh}')`;
+        const img = req.body.card_image;
+        const cardInsertQuery = `INSERT INTO ttc_cards (name, set_id, hp, stage, attacks, image) 
+                                VALUES ('${cardName}', '${setID}', '${hp}', '${stageID}', '${attacks}', '${img}')`;
         db.query(cardInsertQuery, (err, addResult) => {
             if (err) throw err;
             const cardID = addResult.insertId;
@@ -123,7 +122,7 @@ app.post('/add', (req, res) => {
 app.get('/member', (req, res) => {
     const userId = req.query.id;
     const limit = 10;
-    const page = req.query.page || 1; // Get the requested page from the query parameters
+    const page = req.query.page || 1;
     const offset = (page - 1) * limit;
     const countQuery = `SELECT COUNT(*) AS total FROM ttc_user_cards WHERE user_id = ${userId}`;
     const userCardsQuery = `
@@ -132,6 +131,7 @@ app.get('/member', (req, res) => {
         JOIN ttc_user_cards ON ttc_cards.id = ttc_user_cards.card_id
         JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
         JOIN ttc_users ON ttc_user_cards.user_id = ttc_users.user_id
+        JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id
         WHERE ttc_user_cards.user_id = ${userId}
         LIMIT ${limit}
         OFFSET ${offset};

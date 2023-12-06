@@ -1,5 +1,27 @@
+body {
+    grid-template-columns: 1fr min(60rem, 90%) 1fr;
+}
+
 h1 {
     color: red;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.numButtons {
+    margin-top: 12.5px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--standard-border-radius);
+    min-width: 250px; /* Adjust this value as needed */
+    opacity: 1;
 }
 
 .tooltip {
@@ -10,8 +32,6 @@ h1 {
 
 .tooltip .tooltiptext {
     visibility: hidden;
-
-    /* Position the tooltip */
     position: absolute;
     z-index: 1;
 }
@@ -24,8 +44,8 @@ table,
 th,
 td {
     border: 1px solid black;
-    border-collapse: collapse;
     text-align: center;
+    border-collapse: collapse;
 }
 
 .error {
