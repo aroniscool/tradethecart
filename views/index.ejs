@@ -1,15 +1,12 @@
 <%- include('header') %>
 
-<h2>Card sets</h2>
-
-<% if (authen) { %>
-    <a href="/add">Add trading card</a>
-<% } %>
-
 <div>
     <h3>Welcome <%= name %>!</h3>
+    <% if (authen) { %>
+        <h4><a class="button" id="special" href="/add">Add trading card!</a></h4>
+    <% } %>
     <div>
-        <h4>Sets</h4>
+        <h4 class="center">Sets</h4>
         <table class="center">
             <thead>
                 <tr>
@@ -35,7 +32,7 @@
         </table>
     </div>
     <div>
-        <h4>Members</h4>
+        <h4 class="center">Members</h4>
         <table class="center">
             <thead></thead>
             <tbody>

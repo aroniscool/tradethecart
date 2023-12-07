@@ -36,7 +36,7 @@
                 <% if (i === currentPage) { %>
                     <span class="current-page"><%= i %></span>
                 <% } else { %>
-                    <a href="/member?id=<%= userId %>&page=<%= i %>"><%= i %></a>
+                    <a class="button" href="/member?id=<%= userId %>&page=<%= i %>"><%= i %></a>
                 <% } %>
             <% } %>
         </nav>
@@ -78,7 +78,7 @@
                 <% if (i === currentPage) { %>
                     <span class="current-page"><%= i %></span>
                 <% } else { %>
-                    <a href="/member?id=<%= userId %>&page=<%= i %>"><%= i %></a>
+                    <a class="button" href="/member?id=<%= userId %>&page=<%= i %>"><%= i %></a>
                 <% } %>
             <% } %>
         </nav>
