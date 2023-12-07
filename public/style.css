@@ -1,11 +1,30 @@
 body {
     grid-template-columns: 1fr min(60rem, 90%) 1fr;
+    background-image: url('body.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+header {
+    background-image: url('header.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+a:hover {
+    color: rgb(128, 19, 0);
 }
 
 :root {
-    --accent: #fbd743;
+    --accent: #dab936;
     --accent-text: var(--bg);
-  }
+}
 
 h1 {
     color: #ff1f1f;
@@ -25,12 +44,13 @@ img {
     max-width: 100%;
     height: auto;
     border-radius: var(--standard-border-radius);
-    min-width: 250px; /* Adjust this value as needed */
+    min-width: 250px;
     opacity: 1;
 }
 
 .tooltip {
     position: relative;
+    text-decoration: dashed;
 }
 
 .tooltip .tooltiptext {
