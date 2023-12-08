@@ -52,8 +52,6 @@ app.get('/set', (req, res) => {
         FROM ttc_cards 
         JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id 
         JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
-        JOIN ttc_user_cards ON ttc_cards.id = ttc_user_cards.card_id
-        JOIN ttc_users ON ttc_user_cards.user_id = ttc_users.user_id
         WHERE ttc_sets.set_id = ${sid}
         LIMIT ${limit}
         OFFSET ${offset};
