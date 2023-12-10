@@ -40,7 +40,6 @@ app.get('/', (req, res) => {
     });
 });
 
-
 app.get('/set', (req, res) => {
     const sid = req.query.id;
     const limit = 10;
@@ -82,7 +81,7 @@ app.get('/add', (req, res) => {
                 let stagesQuery = `SELECT st_id, st_name FROM ttc_stages`;
                 db.query(stagesQuery, (err, stages) => {
                     if (err) throw err;
-                    res.render('add', { sets: sets, stages: stages });
+                    res.render('add', { sets: sets, stages: stages, source : 'addcard' });
                 });
             });
         });
@@ -116,6 +115,51 @@ app.post('/add', (req, res) => {
         res.send("denied");
     }
 });
+
+app.get('/addcollection', (req, res) => {
+    const sessionobj = req.session;
+    if (sessionobj.authen) {
+        const uid = sessionobj.authen;
+        const userQuery = `SELECT * FROM ttc_users WHERE user_id = "${uid}" `;
+        db.query(userQuery, (err, userRow) => {
+            if (err) throw err;
+            const cardsQuery = `SELECT * FROM ttc_cards`;
+            db.query(cardsQuery, (err2, cardsRow) => {
+                if (err2) throw err2;
+                res.render('add', { source: 'addcollection', user: userRow, cards: cardsRow });
+            });
+        });
+    } else {
+        res.send("denied");
+    }
+});
+
+app.post('/addcollection', (req, res) => {
+    const sessionobj = req.session;
+    if (sessionobj.authen) {
+        const uid = sessionobj.authen;
+        const selectedCard = req.body.cards;
+        // Check if the card already exists in the user's collection
+        const checkUserCardQuery = `SELECT * FROM ttc_user_cards WHERE user_id = ${uid} AND card_id = ${selectedCard}`;
+        db.query(checkUserCardQuery, (err, userCardResult) => {
+            if (err) throw err;
+            if (userCardResult.length > 0) {
+                // The card already exists in the user's collection
+                res.send('Card already exists in your collection!');
+            } else {
+                // Add the card to the user's collection
+                const addUserCardQuery = `INSERT INTO ttc_user_cards (user_id, card_id) VALUES (${uid}, ${selectedCard})`;
+                db.query(addUserCardQuery, (errAdd, addUserCardResult) => {
+                    if (errAdd) throw errAdd;
+                    res.send('Card added to your collection successfully!');
+                });
+            }
+        });
+    } else {
+        res.send("denied");
+    }
+});
+
 
 app.get('/member', (req, res) => {
     const userId = req.query.id;
