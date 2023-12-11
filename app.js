@@ -42,7 +42,7 @@ app.get('/', (req, res) => {
 
 app.get('/set', (req, res) => {
     const sid = req.query.id;
-    const limit = 10;
+    const limit = 8;
     const page = req.query.page || 1;
     const offset = (page - 1) * limit;
     const countQuery = `SELECT COUNT(*) AS total FROM ttc_cards WHERE set_id = ${sid}`;
@@ -163,7 +163,7 @@ app.post('/addcollection', (req, res) => {
 
 app.get('/member', (req, res) => {
     const userId = req.query.id;
-    const limit = 10;
+    const limit = 8;
     const page = req.query.page || 1;
     const offset = (page - 1) * limit;
     const countQuery = `SELECT COUNT(*) AS total FROM ttc_user_cards WHERE user_id = ${userId}`;

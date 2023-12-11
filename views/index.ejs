@@ -13,8 +13,8 @@
     <h4 class="center">Sets</h4>
     <div class="set-grid center">
         <% sets.forEach((set) => { %>
-            <div class="set-item center">
-                <a href="/set?id=<%= set.set_id %>"><img src="<%= set.set_image %>" alt="Image of <%= set.set_name %>"></a>
+            <div class="set-item">
+                <a href="/set?id=<%= set.set_id %>"><img class="center" src="<%= set.set_image %>" alt="Image of <%= set.set_name %>"></a>
             </div>
         <% }); %>
     </div>

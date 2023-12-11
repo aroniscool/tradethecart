@@ -18,6 +18,11 @@ h1 {
     font-family: 'Silkscreen', sans-serif;
 }
 
+h4 {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
 header {
     background-image: url('header.png');
     background-size: cover;
@@ -52,6 +57,8 @@ a:hover {
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+    justify-content: center;
+    align-items: center;
 }
 
 .numButtons {
@@ -67,6 +74,19 @@ a:hover {
 .set-item img {
     width: 50%;
     height: 110px;
+    object-fit:contain;
+    display: block;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 5px;
+}
+
+.card-item img {
+    width: 80%;
+    height: 80%;
     object-fit:contain;
     display: block;
 }
@@ -142,11 +162,24 @@ nav a[aria-current="page"] {
     border-color: rgb(130, 175, 39);
 }
 
-@media only screen and (max-width: 720px) {
+@media only screen and (max-width: 670px) {
     nav a {
         border: none;
         padding: 0;
         text-decoration: underline;
         line-height: 1;
+    }
+
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .card-item img {
+        width: 90%;
+        height: 90%;
+        object-fit:contain;
+        display: block;
     }
 }
