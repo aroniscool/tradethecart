@@ -10,31 +10,13 @@
     <% } else { %>
         <a class="button" href="/login">Login</a>
     <% } %>
-    <div>
-        <h4 class="center">Sets</h4>
-        <table class="center">
-            <thead>
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Cards</th>
-                    <th scope="col">Date released</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% sets.forEach((set)=> {
-                    const date = {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    }; %>
-                    <tr>
-                        <td><a href="/set?id=<%= set.set_id %>"><%= set.set_name %></a></td>
-                        <td><%= set.set_num_cards %></td>
-                        <td><%= set.set_date.toLocaleDateString('en-GB', date) %></td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
+    <h4 class="center">Sets</h4>
+    <div class="set-grid center">
+        <% sets.forEach((set) => { %>
+            <div class="set-item center">
+                <a href="/set?id=<%= set.set_id %>"><img src="<%= set.set_image %>" alt="Image of <%= set.set_name %>"></a>
+            </div>
+        <% }); %>
     </div>
     <div>
         <h4 class="center">Members</h4>

@@ -193,12 +193,12 @@ app.get('/member', (req, res) => {
 
 app.get('/login', (req, res) => {
     let title = "Login";
-    res.render('login', { tdata: title, source: 'login', error: '' });
+    res.render('login', { title: title, source: 'login', error: '' });
 });
 
 app.get('/signup', (req, res) => {
     let title = "Sign up";
-    res.render('login', { tdata: title, source: 'signup' });
+    res.render('login', { title: title, source: 'signup' });
 });
 
 app.post('/signup', (req, res) => {
@@ -212,7 +212,7 @@ app.post('/signup', (req, res) => {
         if (existingUser.length > 0) {
             // Username or email already exists, render an error message
             let title = "Sign up";
-            res.render('login', { tdata: title, source: 'signup', error: 'Username or email already in use' });
+            res.render('login', { title: title, source: 'signup', error: 'Username or email already in use' });
         } else {
             // Username and email are unique, proceed with the signup
             let sqlinsert = `INSERT INTO ttc_users (username, email, password) VALUES ("${username}", "${email}", "${password}");`;
@@ -238,7 +238,7 @@ app.post('/login', (req, res) => {
             req.session.authen = result[0].user_id;
             res.redirect('/');
         } else {
-            res.render('login', { tdata: 'Login', source: 'login', error: 'Incorrect email and/or password' });
+            res.render('login', { title: 'Login', source: 'login', error: 'Incorrect email and/or password' });
         }
     });
 });

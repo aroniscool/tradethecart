@@ -1,7 +1,7 @@
 <%- include('header') %>
     <% if (source === 'addcollection') { %>
 
-        <h2>Add card to your collection</h2>
+        <h3>Add card to your collection</h3>
         <form action="/addcollection" method="POST">
         <select name="cards">
             <% cards.forEach(card => { %>
@@ -15,7 +15,7 @@
 
     <% } else if (source === 'addcard') { %>
 
-    <h2>Add card</h2>
+    <h3>Add card</h3>
     <a class="button" href="/addcollection">Add card to your collection</a>
     <form action="/add" method="POST">
         <label>Card name:</label><br>

@@ -58,6 +58,19 @@ a:hover {
     margin-top: 12.5px;
 }
 
+.set-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.set-item img {
+    width: 50%;
+    height: 110px;
+    object-fit:contain;
+    display: block;
+}
+
 .tooltip {
     position: relative;
     text-decoration: dashed;
