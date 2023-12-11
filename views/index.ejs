@@ -4,11 +4,13 @@
     <h3>Welcome <%= name %>!</h3>
     <% if (authen) { %>
         <nav>
-            <a class="button" id="special" href="/add">Add trading card!</a></h5> |
+            <a class="button" id="special" href="/add">Add trading card!</a> |
             <a href="/member?id=<%= authen %>">Your cards</a>
         </nav>
     <% } else { %>
-        <a class="button" href="/login">Login</a>
+        <nav>
+            <a class="button" href="/login">Login</a>
+        </nav>
     <% } %>
     <h4 class="center">Sets</h4>
     <div class="set-grid center">

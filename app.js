@@ -81,7 +81,7 @@ app.get('/add', (req, res) => {
                 let stagesQuery = `SELECT st_id, st_name FROM ttc_stages`;
                 db.query(stagesQuery, (err, stages) => {
                     if (err) throw err;
-                    res.render('add', { sets: sets, stages: stages, source : 'addcard' });
+                    res.render('add', { sets: sets, stages: stages, source: 'addcard' });
                 });
             });
         });
@@ -160,8 +160,8 @@ app.post('/addcollection', (req, res) => {
     }
 });
 
-
 app.get('/member', (req, res) => {
+    let authen = req.session.authen || null;
     const userId = req.query.id;
     const limit = 8;
     const page = req.query.page || 1;
@@ -186,19 +186,55 @@ app.get('/member', (req, res) => {
 
         db.query(userCardsQuery, (err, userCards) => {
             if (err) throw err;
-            res.render('details', {userId: userId, source: 'member', member: userCards, totalPages: totalPages, currentPage: page});
+            res.render('details', { userId: userId, source: 'member', member: userCards, totalPages: totalPages, currentPage: page, authen: authen });
         });
     });
 });
 
+app.get('/delete', (req, res) => {
+    const sessionobj = req.session;
+    if (sessionobj.authen) {
+        const uid = sessionobj.authen;
+        const userQuery = `SELECT * FROM ttc_users WHERE user_id = "${uid}" `;
+        db.query(userQuery, (err, userRow) => {
+            if (err) throw err;
+            const cardsQuery = `
+                SELECT ttc_cards.id, ttc_cards.name
+                FROM ttc_user_cards
+                JOIN ttc_cards ON ttc_user_cards.card_id = ttc_cards.id
+                WHERE ttc_user_cards.user_id = "${uid}"
+            `;
+            db.query(cardsQuery, (err2, cardsRow) => {
+                if (err2) throw err2;
+                res.render('edit', { source: 'delete', user: userRow, cards: cardsRow });
+            });
+        });
+    } else {
+        res.send("denied");
+    }
+});
+
+app.post('/delete', (req, res) => {
+    const sessionobj = req.session;
+    if (sessionobj.authen) {
+        const uid = sessionobj.authen;
+        const cardId = req.body.cardId;
+        const deleteCardQuery = `DELETE FROM ttc_user_cards WHERE user_id = "${uid}" AND card_id = "${cardId}"`;
+        db.query(deleteCardQuery, (err, result) => {
+            if (err) throw err;
+            res.send('Card removed from your collection successfully!');
+        });
+    } else {
+        res.send("denied");
+    }
+});
+
 app.get('/login', (req, res) => {
-    let title = "Login";
-    res.render('login', { title: title, source: 'login', error: '' });
+    res.render('login', { title: "Login", source: 'login', error: '' });
 });
 
 app.get('/signup', (req, res) => {
-    let title = "Sign up";
-    res.render('login', { title: title, source: 'signup' });
+    res.render('login', { title: "Sign up", source: 'signup' });
 });
 
 app.post('/signup', (req, res) => {

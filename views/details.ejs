@@ -28,6 +28,11 @@
     <% } %>
     <% if (source === 'member') { %>
         <h2 class="center"><%= member[0] ? member[0].username : 'User' %>'s collection</h2>
+        <% if (authen == userId) { %>
+            <nav>
+                <a href="/delete">Remove your card</a>
+            </nav>
+        <% } %>
         <% if (member && member.length > 0) { %>
             <div class="card-grid">
                 <% member.forEach((card) => { %>

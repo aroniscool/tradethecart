@@ -1,0 +1,15 @@
+<%- include('header') %>
+<% if (source === 'delete') { %>
+    <h3>Remove card from your collection</h3>
+    <form action="/delete" method="POST">
+        <select name="cardId">
+            <% cards.forEach(card => { %>
+                <option value="<%= card.id %>">
+                    <%= card.name %>
+                </option>
+            <% }); %>
+        </select>
+        <button type="submit">Submit</button>
+    </form>
+<% } %>
+<%- include('footer') %>

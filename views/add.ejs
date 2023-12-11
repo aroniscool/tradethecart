@@ -1,8 +1,8 @@
 <%- include('header') %>
     <% if (source === 'addcollection') { %>
 
-        <h3>Add card to your collection</h3>
-        <form action="/addcollection" method="POST">
+    <h3>Add card to your collection</h3>
+    <form action="/addcollection" method="POST">
         <select name="cards">
             <% cards.forEach(card => { %>
                 <option value="<%= card.id %>">
