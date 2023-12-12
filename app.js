@@ -53,8 +53,7 @@ app.get('/set', (req, res) => {
         JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
         WHERE ttc_sets.set_id = ${sid}
         LIMIT ${limit}
-        OFFSET ${offset};
-    `;
+        OFFSET ${offset};`;
     db.query(countQuery, (errCount, countResult) => {
         if (errCount) throw errCount;
 
@@ -63,8 +62,22 @@ app.get('/set', (req, res) => {
 
         db.query(sql, (err, result) => {
             if (err) throw err;
-            res.render('details', { setID: sid, cards: result, source: 'card', totalPages: totalPages, currentPage: page });
+            res.render('details', { setID: sid, cards: result, source: 'set', totalPages: totalPages, currentPage: page });
         });
+    });
+});
+
+app.get('/card', (req, res) => {
+    const cardID = req.query.id;
+    const sql = `
+    SELECT *
+    FROM ttc_cards 
+    JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id 
+    JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
+    WHERE ttc_cards.id = ${cardID}`;
+    db.query(sql, (err, result) => {
+        if (err) throw err;
+        res.render('details', { cardID: cardID, card: result[0], source: 'card' });
     });
 });
 
@@ -108,7 +121,7 @@ app.post('/add', (req, res) => {
             const userCardInsertQuery = `INSERT INTO ttc_user_cards (user_id, card_id) VALUES ('${uid}', '${cardID}')`;
             db.query(userCardInsertQuery, (err, result) => {
                 if (err) throw err;
-                res.render('success', {message: 'Card added successfully!'});
+                res.render('success', { message: 'Card added successfully!' });
             });
         });
     } else {
@@ -232,7 +245,7 @@ app.post('/delete', (req, res) => {
         const deleteCardQuery = `DELETE FROM ttc_user_cards WHERE user_id = "${uid}" AND card_id = "${cardId}"`;
         db.query(deleteCardQuery, (err, result) => {
             if (err) throw err;
-            res.render('success', {message: 'Card removed from your collection!'});
+            res.render('success', { message: 'Card removed from your collection!' });
         });
     } else {
         res.send("denied");
@@ -288,8 +301,14 @@ app.post('/login', (req, res) => {
         }
     });
 });
-
-
+/*
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) throw err;
+        res.redirect('/');
+    });
+});
+*/
 app.listen(PORT, () => {
     console.log(`App running on http://localhost:${PORT}`)
 });

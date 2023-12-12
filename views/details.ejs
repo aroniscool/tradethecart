@@ -1,12 +1,12 @@
 <%- include('header') %>
 
-    <% if (source === 'card') { %>
+    <% if (source === 'set') { %>
         <h2 class="center"><%= cards[0] ? cards[0].set_name : 'Set empty' %></h2>
         <% if (cards && cards.length > 0) { %>
             <div class="card-grid">
                 <% cards.forEach((card) => { %>
                     <div class="card-item" style="display: flex;">
-                        <img class="center" src="<%= card.image %>" alt="Image of <%= card.name %>">
+                        <a href="/card?id=<%= card.id %>"><img class="center" src="<%= card.image %>" alt="Image of <%= card.name %>"></a>
                     </div>
                 <% }); %>
             </div>            
@@ -37,7 +37,7 @@
             <div class="card-grid">
                 <% member.forEach((card) => { %>
                 <div class="card-item">
-                    <img class="center" src="<%= card.image %>" alt="Image of <%= card.name %>">
+                    <a href="/card?id=<%= card.id %>"><img class="center" src="<%= card.image %>" alt="Image of <%= card.name %>"></a>
                 </div>
                 <% }); %>
             </div>
@@ -55,6 +55,17 @@
                 <% } %>
             </nav>
         <% } %>
+    <% } %>
+
+    <% if (source === 'card') { %>
+        <h2 class="center"><%= card.name %></h2>
+        <div class="card-details">
+            <% if (card) { %>
+                <p>Set: <%= card.set_name %></p>
+            <% } else { %>
+                <p class="center">Card not found.</p>
+            <% } %>
+        </div>
     <% } %>
 
 <%- include('footer') %>
