@@ -63,7 +63,7 @@ app.get('/set', (req, res) => {
 
         db.query(sql, (err, result) => {
             if (err) throw err;
-            res.render('details', { cards: result, source: 'card', totalPages: totalPages, currentPage: page });
+            res.render('details', { setID: sid, cards: result, source: 'card', totalPages: totalPages, currentPage: page });
         });
     });
 });
@@ -108,7 +108,7 @@ app.post('/add', (req, res) => {
             const userCardInsertQuery = `INSERT INTO ttc_user_cards (user_id, card_id) VALUES ('${uid}', '${cardID}')`;
             db.query(userCardInsertQuery, (err, result) => {
                 if (err) throw err;
-                res.send('Card added successfully!');
+                res.render('success', {message: 'Card added successfully!'});
             });
         });
     } else {
@@ -126,7 +126,7 @@ app.get('/addcollection', (req, res) => {
             const cardsQuery = `SELECT * FROM ttc_cards`;
             db.query(cardsQuery, (err2, cardsRow) => {
                 if (err2) throw err2;
-                res.render('add', { source: 'addcollection', user: userRow, cards: cardsRow });
+                res.render('add', { source: 'addcollection', user: userRow, cards: cardsRow, error: '' });
             });
         });
     } else {
@@ -139,21 +139,31 @@ app.post('/addcollection', (req, res) => {
     if (sessionobj.authen) {
         const uid = sessionobj.authen;
         const selectedCard = req.body.cards;
-        // Check if the card already exists in the user's collection
-        const checkUserCardQuery = `SELECT * FROM ttc_user_cards WHERE user_id = ${uid} AND card_id = ${selectedCard}`;
-        db.query(checkUserCardQuery, (err, userCardResult) => {
+        // Fetch user information
+        const userQuery = `SELECT * FROM ttc_users WHERE user_id = "${uid}" `;
+        db.query(userQuery, (err, userRow) => {
             if (err) throw err;
-            if (userCardResult.length > 0) {
-                // The card already exists in the user's collection
-                res.send('Card already exists in your collection!');
-            } else {
-                // Add the card to the user's collection
-                const addUserCardQuery = `INSERT INTO ttc_user_cards (user_id, card_id) VALUES (${uid}, ${selectedCard})`;
-                db.query(addUserCardQuery, (errAdd, addUserCardResult) => {
-                    if (errAdd) throw errAdd;
-                    res.send('Card added to your collection successfully!');
+            // Fetch all cards
+            const cardsQuery = `SELECT * FROM ttc_cards`;
+            db.query(cardsQuery, (err2, cardsRow) => {
+                if (err2) throw err2;
+                // Check if the card already exists in the user's collection
+                const checkUserCardQuery = `SELECT * FROM ttc_user_cards WHERE user_id = ${uid} AND card_id = ${selectedCard}`;
+                db.query(checkUserCardQuery, (err, userCardResult) => {
+                    if (err) throw err;
+                    if (userCardResult.length > 0) {
+                        // Render with error message
+                        res.render('add', { source: 'addcollection', user: userRow, cards: cardsRow, error: 'Card already exists in your collection!' });
+                    } else {
+                        // Add the card to the user's collection
+                        const addUserCardQuery = `INSERT INTO ttc_user_cards (user_id, card_id) VALUES (${uid}, ${selectedCard})`;
+                        db.query(addUserCardQuery, (errAdd, addUserCardResult) => {
+                            if (errAdd) throw errAdd;
+                            res.render('success', { message: 'Card added to your collection!' });
+                        });
+                    }
                 });
-            }
+            });
         });
     } else {
         res.send("denied");
@@ -222,7 +232,7 @@ app.post('/delete', (req, res) => {
         const deleteCardQuery = `DELETE FROM ttc_user_cards WHERE user_id = "${uid}" AND card_id = "${cardId}"`;
         db.query(deleteCardQuery, (err, result) => {
             if (err) throw err;
-            res.send('Card removed from your collection successfully!');
+            res.render('success', {message: 'Card removed from your collection!'});
         });
     } else {
         res.send("denied");
@@ -234,7 +244,7 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/signup', (req, res) => {
-    res.render('login', { title: "Sign up", source: 'signup' });
+    res.render('login', { title: "Sign up", source: 'signup', error: '' });
 });
 
 app.post('/signup', (req, res) => {

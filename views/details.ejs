@@ -13,19 +13,19 @@
         <% } else { %>
             <p class="center">No cards found in this set.</p>
         <% } %>
-    <% if (totalPages > 1) { %>
+        <% if (totalPages > 1) { %>
         <nav class="center numButtons">
             <% for (let i = 1; i <= totalPages; i++) { %>
                 <% if (i === currentPage) { %>
                     <span class="current-page"><%= i %></span>
                 <% } else { %>
-                    <a class="button" href="/member?id=<%= userId %>&page=<%= i %>"><%= i %></a>
+                    <a class="button" href="/set?id=<%= setID %>&page=<%= i %>"><%= i %></a>
                 <% } %>
             <% } %>
         </nav>
+        <% } %>
     <% } %>
 
-    <% } %>
     <% if (source === 'member') { %>
         <h2 class="center"><%= member[0] ? member[0].username : 'User' %>'s collection</h2>
         <% if (authen == userId) { %>
@@ -44,17 +44,17 @@
         <% } else { %>
             <p class="center">No cards found in this user's collection.</p>
         <% } %>
-    <% } %>
-    <% if (totalPages > 1) { %>
-        <nav class="center numButtons">
-            <% for (let i = 1; i <= totalPages; i++) { %>
-                <% if (i === currentPage) { %>
-                    <span class="current-page"><%= i %></span>
-                <% } else { %>
-                    <a class="button" href="/member?id=<%= userId %>&page=<%= i %>"><%= i %></a>
+        <% if (totalPages > 1) { %>
+            <nav class="center numButtons">
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <% if (i === currentPage) { %>
+                        <span class="current-page"><%= i %></span>
+                    <% } else { %>
+                        <a class="button" href="/member?id=<%= userId %>&page=<%= i %>"><%= i %></a>
+                    <% } %>
                 <% } %>
-            <% } %>
-        </nav>
+            </nav>
+        <% } %>
     <% } %>
 
 <%- include('footer') %>
