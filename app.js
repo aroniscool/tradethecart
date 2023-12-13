@@ -28,7 +28,7 @@ app.use(sessions({
 
 app.get('/', (req, res) => {
     let setsql = `SELECT * FROM ttc_sets ORDER BY set_date DESC`;
-    let namesql = `SELECT user_id, username FROM ttc_users`; // Fetch usernames
+    let namesql = `SELECT user_id, username FROM ttc_users`;
     let name = req.session.username || "guest"; // Default to 'guest' if username is not set
     let authen = req.session.authen || null;
     db.query(setsql, (errSets, resultSets) => {
@@ -56,13 +56,11 @@ app.get('/set', (req, res) => {
         OFFSET ${offset};`;
     db.query(countQuery, (errCount, countResult) => {
         if (errCount) throw errCount;
-
         const totalCards = countResult[0].total;
         const totalPages = Math.ceil(totalCards / limit);
-
         db.query(sql, (err, result) => {
             if (err) throw err;
-            res.render('details', { setID: sid, cards: result, source: 'set', totalPages: totalPages, currentPage: page });
+            res.render('details', { setID: sid, cards: result, source: 'set', totalPages: totalPages });
         });
     });
 });
@@ -152,23 +150,18 @@ app.post('/addcollection', (req, res) => {
     if (sessionobj.authen) {
         const uid = sessionobj.authen;
         const selectedCard = req.body.cards;
-        // Fetch user information
         const userQuery = `SELECT * FROM ttc_users WHERE user_id = "${uid}" `;
         db.query(userQuery, (err, userRow) => {
             if (err) throw err;
-            // Fetch all cards
             const cardsQuery = `SELECT * FROM ttc_cards`;
             db.query(cardsQuery, (err2, cardsRow) => {
                 if (err2) throw err2;
-                // Check if the card already exists in the user's collection
                 const checkUserCardQuery = `SELECT * FROM ttc_user_cards WHERE user_id = ${uid} AND card_id = ${selectedCard}`;
                 db.query(checkUserCardQuery, (err, userCardResult) => {
                     if (err) throw err;
                     if (userCardResult.length > 0) {
-                        // Render with error message
                         res.render('add', { source: 'addcollection', user: userRow, cards: cardsRow, error: 'Card already exists in your collection!' });
                     } else {
-                        // Add the card to the user's collection
                         const addUserCardQuery = `INSERT INTO ttc_user_cards (user_id, card_id) VALUES (${uid}, ${selectedCard})`;
                         db.query(addUserCardQuery, (errAdd, addUserCardResult) => {
                             if (errAdd) throw errAdd;
@@ -189,6 +182,9 @@ app.get('/member', (req, res) => {
     const limit = 8;
     const page = req.query.page || 1;
     const offset = (page - 1) * limit;
+    const sort = req.query.sort || 'name'; // Default to sorting by card name
+    const order = req.query.order || 'ASC'; // Default to ascending order
+
     const countQuery = `SELECT COUNT(*) AS total FROM ttc_user_cards WHERE user_id = ${userId}`;
     const userCardsQuery = `
         SELECT *
@@ -198,9 +194,11 @@ app.get('/member', (req, res) => {
         JOIN ttc_users ON ttc_user_cards.user_id = ttc_users.user_id
         JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id
         WHERE ttc_user_cards.user_id = ${userId}
+        ORDER BY ${sort} ${order}  -- Added ORDER BY clause
         LIMIT ${limit}
         OFFSET ${offset};
     `;
+
     db.query(countQuery, (errCount, countResult) => {
         if (errCount) throw errCount;
 
@@ -209,7 +207,7 @@ app.get('/member', (req, res) => {
 
         db.query(userCardsQuery, (err, userCards) => {
             if (err) throw err;
-            res.render('details', { userId: userId, source: 'member', member: userCards, totalPages: totalPages, currentPage: page, authen: authen });
+            res.render('details', { userId: userId, source: 'member', member: userCards, totalPages: totalPages, authen: authen });
         });
     });
 });
@@ -264,16 +262,13 @@ app.post('/signup', (req, res) => {
     const username = req.body.signup_username;
     const email = req.body.signup_email;
     const password = req.body.signup_password;
-    // Check if the username or email already exists
     let checkExistingUser = `SELECT * FROM ttc_users WHERE username = "${username}" OR email = "${email}"`;
     db.query(checkExistingUser, (err, existingUser) => {
         if (err) throw err;
         if (existingUser.length > 0) {
-            // Username or email already exists, render an error message
             let title = "Sign up";
             res.render('login', { title: title, source: 'signup', error: 'Username or email already in use' });
         } else {
-            // Username and email are unique, proceed with the signup
             let sqlinsert = `INSERT INTO ttc_users (username, email, password) VALUES ("${username}", "${email}", "${password}");`;
             db.query(sqlinsert, (err, result) => {
                 if (err) throw err;

@@ -16,11 +16,7 @@
         <% if (totalPages > 1) { %>
         <nav class="center numButtons">
             <% for (let i = 1; i <= totalPages; i++) { %>
-                <% if (i === currentPage) { %>
-                    <span class="current-page"><%= i %></span>
-                <% } else { %>
-                    <a class="button" href="/set?id=<%= setID %>&page=<%= i %>"><%= i %></a>
-                <% } %>
+                    <a href="/set?id=<%= setID %>&page=<%= i %>"><%= i %></a>
             <% } %>
         </nav>
         <% } %>
@@ -47,11 +43,7 @@
         <% if (totalPages > 1) { %>
             <nav class="center numButtons">
                 <% for (let i = 1; i <= totalPages; i++) { %>
-                    <% if (i === currentPage) { %>
-                        <span class="current-page"><%= i %></span>
-                    <% } else { %>
-                        <a class="button" href="/member?id=<%= userId %>&page=<%= i %>"><%= i %></a>
-                    <% } %>
+                        <a href="/member?id=<%= userId %>&page=<%= i %>"><%= i %></a>
                 <% } %>
             </nav>
         <% } %>
