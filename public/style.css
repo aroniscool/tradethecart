@@ -96,6 +96,10 @@ a:hover {
     height: 660px;
 }
 
+.card-details tr:nth-child(even) {
+    background-color: transparent;
+}
+
 .tooltip {
     position: relative;
     text-decoration: dashed;

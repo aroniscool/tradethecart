@@ -68,7 +68,7 @@
         <div class="card-details">
             <% if (card) { %>
                 <div class="center card-single"><img src="<%= card.image %>" alt="Image of <%= card.name %>"></div>
-                <table class="center">
+                <table class="center card-details">
                     <tr>
                         <th>Release date</th>
                         <td><%= card.set_date.toLocaleString('en-GB', date); %></td>
