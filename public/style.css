@@ -78,6 +78,14 @@ a:hover {
     display: block;
 }
 
+.set-item a img, .card-item a:hover img {
+    transition: transform 0.3s ease-out;
+}
+
+.set-item a:hover img, .card-item a:hover img {
+    transform: scale(1.1);
+}
+
 .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -162,7 +170,7 @@ nav a.current,
 nav a:hover,
 nav a[aria-current="page"] {
     border-color: var(--accent);
-    color: var(--accent);
+    color: var(--accent-text);
     cursor: pointer;
 }
 
