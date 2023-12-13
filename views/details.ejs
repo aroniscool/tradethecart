@@ -58,10 +58,38 @@
     <% } %>
 
     <% if (source === 'card') { %>
+        <% 
+        const date = {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        }; %>
         <h2 class="center"><%= card.name %></h2>
         <div class="card-details">
             <% if (card) { %>
-                <p>Set: <%= card.set_name %></p>
+                <div class="center card-single"><img src="<%= card.image %>" alt="Image of <%= card.name %>"></div>
+                <table class="center">
+                    <tr>
+                        <th>Release date</th>
+                        <td><%= card.set_date.toLocaleString('en-GB', date); %></td>
+                    </tr>
+                    <tr>
+                        <th>Set</th>
+                        <td><%= card.set_name %></td>
+                    </tr>
+                    <tr>
+                        <th>Stage</th>
+                        <td><%= card.st_name %></td>
+                    </tr>
+                    <tr>
+                        <th>HP</th>
+                        <td><%= card.hp %></td>
+                    </tr>
+                    <tr>
+                        <th>Attacks</th>
+                        <td><%= card.attacks %></td>
+                    </tr>
+                </table>
             <% } else { %>
                 <p class="center">Card not found.</p>
             <% } %>
