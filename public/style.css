@@ -78,7 +78,7 @@ a:hover {
     display: block;
 }
 
-.set-item a img, .card-item a:hover img {
+.set-item a img, .card-item a img {
     transition: transform 0.3s ease-out;
 }
 
