@@ -6,7 +6,6 @@
         <nav>
             <a class="button" id="special" href="/add">Add trading card!</a> |
             <a href="/member?id=<%= authen %>">Your cards</a>
-            <!-- | <a href="/logout">Logout</a> -->
         </nav>
     <% } else { %>
         <nav>
@@ -14,6 +13,7 @@
         </nav>
     <% } %>
     <h4 class="center">Sets</h4>
+    <p class="center">Explore the available Pokémon card sets. Click on a set to view more details.</p>
     <div class="set-grid center">
         <% sets.forEach((set) => { %>
             <div class="set-item">
@@ -21,8 +21,9 @@
             </div>
         <% }); %>
     </div>
-    <div>
-        <h4 class="center">Members</h4>
+    <div class="center">
+        <h4>Members</h4>
+        <p>Connect with other members and explore their collections. Click on a member's name to view their cards.</p>
         <table class="center">
             <thead></thead>
             <tbody>

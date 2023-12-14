@@ -46,9 +46,7 @@ app.get('/set', (req, res) => {
     const page = req.query.page || 1;
     const offset = (page - 1) * limit;
     const countQuery = `SELECT COUNT(*) AS total FROM ttc_cards WHERE set_id = ${sid}`;
-    const sql = `
-        SELECT *
-        FROM ttc_cards 
+    const sql = ` SELECT * FROM ttc_cards 
         JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id 
         JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
         WHERE ttc_sets.set_id = ${sid}
@@ -67,9 +65,7 @@ app.get('/set', (req, res) => {
 
 app.get('/card', (req, res) => {
     const cardID = req.query.id;
-    const sql = `
-    SELECT *
-    FROM ttc_cards 
+    const sql = ` SELECT * FROM ttc_cards 
     JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id 
     JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
     WHERE ttc_cards.id = ${cardID}`;
@@ -97,7 +93,7 @@ app.get('/add', (req, res) => {
             });
         });
     } else {
-        res.send("denied");
+        res.render('success', { message: "Access denied, log in to add your card" });
     }
 });
 
@@ -123,7 +119,7 @@ app.post('/add', (req, res) => {
             });
         });
     } else {
-        res.send("denied");
+        res.render('success', { message: "Access denied, log in to add your card" });
     }
 });
 
@@ -141,7 +137,7 @@ app.get('/addcollection', (req, res) => {
             });
         });
     } else {
-        res.send("denied");
+        res.render('success', { message: "Access denied, log in first to add your card to the collection" });
     }
 });
 
@@ -163,7 +159,7 @@ app.post('/addcollection', (req, res) => {
                         res.render('add', { source: 'addcollection', user: userRow, cards: cardsRow, error: 'Card already exists in your collection!' });
                     } else {
                         const addUserCardQuery = `INSERT INTO ttc_user_cards (user_id, card_id) VALUES (${uid}, ${selectedCard})`;
-                        db.query(addUserCardQuery, (errAdd, addUserCardResult) => {
+                        db.query(addUserCardQuery, (errAdd, addCardResult) => {
                             if (errAdd) throw errAdd;
                             res.render('success', { message: 'Card added to your collection!' });
                         });
@@ -172,41 +168,31 @@ app.post('/addcollection', (req, res) => {
             });
         });
     } else {
-        res.send("denied");
+        res.render('success', { message: "Access denied, log in first to add your card to the collection" });
     }
 });
 
 app.get('/member', (req, res) => {
-    let authen = req.session.authen || null;
+    let authen = req.session.authen;
     const userId = req.query.id;
     const limit = 8;
     const page = req.query.page || 1;
     const offset = (page - 1) * limit;
-    const sort = req.query.sort || 'name'; // Default to sorting by card name
-    const order = req.query.order || 'ASC'; // Default to ascending order
-
     const countQuery = `SELECT COUNT(*) AS total FROM ttc_user_cards WHERE user_id = ${userId}`;
-    const userCardsQuery = `
-        SELECT *
-        FROM ttc_cards
+    const userCardsQuery = `SELECT * FROM ttc_cards
         JOIN ttc_user_cards ON ttc_cards.id = ttc_user_cards.card_id
         JOIN ttc_stages ON ttc_cards.stage = ttc_stages.st_id
         JOIN ttc_users ON ttc_user_cards.user_id = ttc_users.user_id
         JOIN ttc_sets ON ttc_cards.set_id = ttc_sets.set_id
         WHERE ttc_user_cards.user_id = ${userId}
-        ORDER BY ${sort} ${order}  -- Added ORDER BY clause
         LIMIT ${limit}
-        OFFSET ${offset};
-    `;
-
-    db.query(countQuery, (errCount, countResult) => {
-        if (errCount) throw errCount;
-
-        const totalCards = countResult[0].total;
+        OFFSET ${offset};`;
+    db.query(countQuery, (err, result) => {
+        if (err) throw err;
+        const totalCards = result[0].total;
         const totalPages = Math.ceil(totalCards / limit);
-
-        db.query(userCardsQuery, (err, userCards) => {
-            if (err) throw err;
+        db.query(userCardsQuery, (err2, userCards) => {
+            if (err2) throw err2;
             res.render('details', { userId: userId, source: 'member', member: userCards, totalPages: totalPages, authen: authen });
         });
     });
@@ -219,19 +205,17 @@ app.get('/delete', (req, res) => {
         const userQuery = `SELECT * FROM ttc_users WHERE user_id = "${uid}" `;
         db.query(userQuery, (err, userRow) => {
             if (err) throw err;
-            const cardsQuery = `
-                SELECT ttc_cards.id, ttc_cards.name
+            const cardsQuery = `SELECT ttc_cards.id, ttc_cards.name
                 FROM ttc_user_cards
                 JOIN ttc_cards ON ttc_user_cards.card_id = ttc_cards.id
-                WHERE ttc_user_cards.user_id = "${uid}"
-            `;
+                WHERE ttc_user_cards.user_id = "${uid}"`;
             db.query(cardsQuery, (err2, cardsRow) => {
                 if (err2) throw err2;
                 res.render('edit', { source: 'delete', user: userRow, cards: cardsRow });
             });
         });
     } else {
-        res.send("denied");
+        res.render('success', { message: "Access denied, log in first to remove your card to the collection" });
     }
 });
 
@@ -246,7 +230,7 @@ app.post('/delete', (req, res) => {
             res.render('success', { message: 'Card removed from your collection!' });
         });
     } else {
-        res.send("denied");
+        res.render('success', { message: "Access denied, log in first to remove your card to the collection" });
     }
 });
 
@@ -277,7 +261,7 @@ app.post('/signup', (req, res) => {
                 req.session.authen = userId;
                 res.redirect('/');
             });
-        }
+        };
     });
 });
 
@@ -296,14 +280,7 @@ app.post('/login', (req, res) => {
         }
     });
 });
-/*
-app.get('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) throw err;
-        res.redirect('/');
-    });
-});
-*/
+
 app.listen(PORT, () => {
     console.log(`App running on http://localhost:${PORT}`)
 });
